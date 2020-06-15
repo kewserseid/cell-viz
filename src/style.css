@@ -1,0 +1,45 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.main-container {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 60px auto;
+  grid-template-columns: 20% auto 20%;
+  grid-template-areas:
+    "toolbar toolbar toolbar"
+    "navigation content filters";
+}
+
+.toolbar {
+  grid-area: toolbar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  border-bottom: solid 1px #ccc;
+}
+
+.toolbar h1 {
+  display: inline-block;
+  margin: 0;
+}
+
+.navigation {
+  grid-area: navigation;
+  padding: 15px;
+  border-right: solid 1px #ccc;
+}
+
+.content {
+  grid-area: content;
+  padding: 15px;
+}
+
+.filters {
+  grid-area: filters;
+  padding: 15px;
+  border-left: solid 1px #ccc;
+}
