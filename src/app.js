@@ -1,4 +1,5 @@
 import React from "react";
+import GenericCell from "./components/generic-cell";
 import "./style.css";
 
 export default () => {
@@ -14,7 +15,9 @@ export default () => {
         </div>
       </div>
       <nav className="navigation">Navigation</nav>
-      <div className="content">Content</div>
+      <div className="content">
+        <GenericCell />
+      </div>
       <div className="filters">Filters</div>
     </div>
   );
