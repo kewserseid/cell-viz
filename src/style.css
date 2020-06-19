@@ -6,40 +6,33 @@ body {
 .main-container {
   height: 100vh;
   display: grid;
-  grid-template-rows: 60px auto;
-  grid-template-columns: 20% auto 20%;
-  grid-template-areas:
-    "toolbar toolbar toolbar"
-    "navigation content filters";
-}
-
-.toolbar {
-  grid-area: toolbar;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 15px;
-  border-bottom: solid 1px #ccc;
-}
-
-.toolbar h1 {
-  display: inline-block;
-  margin: 0;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 100vh 1fr;
+  grid-template-areas: "navigation content filters";
 }
 
 .navigation {
   grid-area: navigation;
-  padding: 15px;
-  border-right: solid 1px #ccc;
+  padding: 0 15px;
+  border-right: solid 1px #ddd;
 }
 
 .content {
   grid-area: content;
-  padding: 15px;
 }
 
 .filters {
   grid-area: filters;
   padding: 15px;
-  border-left: solid 1px #ccc;
+  border-left: solid 1px #ddd;
+}
+
+#svg-wrapper {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#svg {
+  height: 100%;
 }

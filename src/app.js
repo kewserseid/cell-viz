@@ -5,16 +5,16 @@ import "./style.css";
 export default () => {
   return (
     <div className="main-container">
-      <div className="toolbar">
-        <div>
-          <h1>Cell Viz</h1>
-          <input type="file" />
-        </div>
-        <div>
-          <button>Settings</button>
-        </div>
-      </div>
-      <nav className="navigation">Navigation</nav>
+      <nav className="navigation">
+        <h1>Cell Viz</h1>
+        <input
+          type="file"
+          accept="application/JSON"
+          onChange={handleFileUpload}
+        />
+        <br />
+        Navigation
+      </nav>
       <div className="content">
         <GenericCell />
       </div>
