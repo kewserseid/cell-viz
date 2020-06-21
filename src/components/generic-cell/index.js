@@ -3,7 +3,7 @@ import { placeNodesOnPath } from "../../utils/graph";
 import diagram from "./generic_cell.svg";
 const d3 = require("d3");
 
-export default ({ graph }) => {
+export default ({ graph, onNodeClick, selectedNodes }) => {
   let svg = useRef();
   let nodeGroups = useRef();
   let edgeGroups = useRef();
@@ -54,18 +54,16 @@ export default ({ graph }) => {
       .append("g")
       .classed("node", true)
       .on("mouseover", handleNodeMouseOver)
-      .on("mouseout", handleNodeMouseOut);
+      .on("mouseout", handleNodeMouseOut)
+      .on("click", onNodeClick);
 
     /*
       Append shape to node group
       */
     nodeGroups.current
       .append("circle")
-      .attr("r", 3)
       .attr("cx", (n) => n.x)
-      .attr("cy", (n) => n.y)
-      .style("fill", "#20A4F3")
-      .style("stroke", "#fff");
+      .attr("cy", (n) => n.y);
 
     /*
       Create an SVG group for each node placed in the visualization. This group will contain the shape representing the node, as well as labels, tooltips and other elements that belong to that specific node
@@ -84,8 +82,6 @@ export default ({ graph }) => {
     edgeGroups.current
       .append("line")
       .attr("id", (e) => e.data.id)
-      .style("stroke", "#000000")
-      .style("opacity", 0.05)
       .attr("x1", (e) => e.data.source.x)
       .attr("y1", (e) => e.data.source.y)
       .attr("x2", (e) => e.data.target.x)
@@ -130,33 +126,47 @@ export default ({ graph }) => {
   Event handler for when the cursor is put over a node
   */
   function handleNodeMouseOver(n) {
-    // Enlarge the node to make it obvious which the hovered node is
-    d3.select(this).select("circle").attr("r", 10);
-    // Disply tooltip and make it appear near the hovered node
+    d3.select(this).classed("highlighted", true);
+    edgeGroups.current.classed(
+      "highlighted",
+      (e) => e.data.source === n || e.data.target === n
+    );
     d3.select("body")
       .append("div")
       .classed("tooltip", true)
       .html(n.data.id)
+      .classed("highlighted", true)
       .style("left", d3.event.pageX + 5 + "px")
-      .style("top", d3.event.pageY - 30 + "px")
-      .style("display", "block");
-    // Highlight edges connected to this node
-    edgeGroups.current.select("line").style("opacity", (e) => {
-      return e.data.source === n || e.data.target === n ? 0.5 : 0;
-    });
+      .style("top", d3.event.pageY - 30 + "px");
   }
 
   /*
 Event handler for when the cursor is put over a node
 */
   function handleNodeMouseOut(n) {
-    // Restore the node to its original size
-    d3.select(this).select("circle").attr("r", 3);
-    //  Remove tooltips
+    d3.select(this).classed("highlighted", false);
     d3.select(".tooltip").remove();
-    // Reset highlighted edges to default style
-    edgeGroups.current.select("line").style("opacity", 0.05);
+    edgeGroups.current.classed("highlighted", false);
   }
+
+  /*
+    when nodes are selected or unselected, update the visualization accordingly
+  */
+  useEffect(() => {
+    if (!nodeGroups.current) return;
+    // If a node is found in the list of selected nodes, assing it a "selected" class
+    nodeGroups.current.classed("selected", (n) =>
+      selectedNodes.find((sn) => sn.data.id === n.data.id)
+    );
+    // If one of an edge's endpoint is found in the list of selected nodes, assing it a "selected" class
+    edgeGroups.current.classed("selected", (e) =>
+      selectedNodes.find(
+        (sn) =>
+          e.data.source.data.id === sn.data.id ||
+          e.data.target.data.id === sn.data.id
+      )
+    );
+  }, [selectedNodes]);
 
   // TODO: Style the nodes according to their annotations or locations
   // TODO: Style the edges

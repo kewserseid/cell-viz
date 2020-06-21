@@ -47,3 +47,34 @@ div.tooltip {
   background-color: #000;
   color: #fff;
 }
+
+div.highlighted.tooltip {
+  display: block;
+}
+
+g.edge line {
+  stroke: #000;
+  opacity: 0.05;
+}
+
+g.node circle {
+  r: 3;
+  fill: #20a4f3;
+  stroke: #fff;
+}
+
+g.highlighted.edge line {
+  opacity: 0.5;
+}
+
+g.highlighted.node circle {
+  r: 10;
+}
+
+g.selected.node circle {
+  r: 10;
+}
+
+g.selected.edge line {
+  opacity: 0.5;
+}
