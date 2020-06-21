@@ -25,7 +25,10 @@ export default ({ graph, onNodeClick, selectedNodes }) => {
   };
 
   useEffect(() => {
-    if (svg.current) renderGraph();
+    if (svg.current) {
+      svg.current.selectAll("g.node,g.edge,div.tooltip").remove();
+      renderGraph();
+    }
   }, [graph]);
 
   /*
