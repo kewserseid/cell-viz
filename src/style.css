@@ -78,3 +78,7 @@ g.selected.node circle {
 g.selected.edge line {
   opacity: 0.5;
 }
+
+g.selected-endpoints.edge line {
+  stroke-width: 2px;
+}

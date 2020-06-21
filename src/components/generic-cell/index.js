@@ -159,13 +159,20 @@ Event handler for when the cursor is put over a node
       selectedNodes.find((sn) => sn.data.id === n.data.id)
     );
     // If one of an edge's endpoint is found in the list of selected nodes, assing it a "selected" class
-    edgeGroups.current.classed("selected", (e) =>
-      selectedNodes.find(
-        (sn) =>
-          e.data.source.data.id === sn.data.id ||
-          e.data.target.data.id === sn.data.id
+    edgeGroups.current
+      .classed("selected", (e) =>
+        selectedNodes.find(
+          (sn) =>
+            e.data.source.data.id === sn.data.id ||
+            e.data.target.data.id === sn.data.id
+        )
       )
-    );
+      .classed(
+        "selected-endpoints",
+        (e) =>
+          selectedNodes.find((sn) => e.data.source.data.id === sn.data.id) &&
+          selectedNodes.find((sn) => e.data.target.data.id === sn.data.id)
+      );
   }, [selectedNodes]);
 
   // TODO: Style the nodes according to their annotations or locations
