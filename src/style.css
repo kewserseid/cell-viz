@@ -36,3 +36,14 @@ body {
 #svg {
   height: 100%;
 }
+
+/* SVG elements style */
+
+div.tooltip {
+  display: none;
+  position: absolute;
+  text-align: center;
+  padding: 5px;
+  background-color: #000;
+  color: #fff;
+}
