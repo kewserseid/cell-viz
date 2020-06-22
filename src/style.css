@@ -57,8 +57,7 @@ g.edge line {
   opacity: 0.05;
 }
 
-g.node circle {
-  r: 3;
+g.node path {
   fill: #20a4f3;
   stroke: #fff;
 }
@@ -67,12 +66,12 @@ g.highlighted.edge line {
   opacity: 0.5;
 }
 
-g.highlighted.node circle {
-  r: 10;
+g.highlighted.node path {
+  transform: scale(2);
 }
 
-g.selected.node circle {
-  r: 10;
+g.selected.node path {
+  transform: scale(2);
 }
 
 g.selected.edge line {
@@ -80,5 +79,5 @@ g.selected.edge line {
 }
 
 g.selected-endpoints.edge line {
-  stroke-width: 2px;
+  stroke: red;
 }

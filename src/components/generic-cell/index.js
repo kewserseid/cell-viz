@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { placeNodesOnPath } from "../../utils/graph";
+import { placeNodesOnPath, getShapeForNode } from "../../utils/graph";
 import diagram from "./generic_cell.svg";
 const d3 = require("d3");
 
@@ -49,28 +49,6 @@ export default ({ graph, onNodeClick, selectedNodes }) => {
     /*
       Create an SVG group for each node placed in the visualization. This group will contain the shape representing the node, as well as labels, tooltips and other elements that belong to that specific node
       */
-    nodeGroups.current = svg.current
-      .selectAll("g.node")
-      .data(nodes)
-      .attr("id", (n) => n.data.id)
-      .enter()
-      .append("g")
-      .classed("node", true)
-      .on("mouseover", handleNodeMouseOver)
-      .on("mouseout", handleNodeMouseOut)
-      .on("click", onNodeClick);
-
-    /*
-      Append shape to node group
-      */
-    nodeGroups.current
-      .append("circle")
-      .attr("cx", (n) => n.x)
-      .attr("cy", (n) => n.y);
-
-    /*
-      Create an SVG group for each node placed in the visualization. This group will contain the shape representing the node, as well as labels, tooltips and other elements that belong to that specific node
-      */
     edgeGroups.current = svg.current
       .selectAll("g.edge")
       .data(edges)
@@ -78,6 +56,29 @@ export default ({ graph, onNodeClick, selectedNodes }) => {
       .enter()
       .append("g")
       .classed("edge", true);
+
+    /*
+      Create an SVG group for each node placed in the visualization. This group will contain the shape representing the node, as well as labels, tooltips and other elements that belong to that specific node
+      */
+    nodeGroups.current = svg.current
+      .selectAll("g.node")
+      .data(nodes)
+      .attr("id", (n) => n.data.id)
+      .enter()
+      .append("g")
+      .classed("node", true)
+      .attr("transform", (n) => `translate(${n.x},${n.y})`)
+      .on("mouseover", handleNodeMouseOver)
+      .on("mouseout", handleNodeMouseOut)
+      .on("click", onNodeClick);
+
+    /*
+      Append shape to node group
+      */
+
+    nodeGroups.current
+      .append("path")
+      .attr("d", (n) => d3.symbol().type(d3[getShapeForNode(n)]).size(30)());
 
     /*
       Append line to edge group
@@ -157,11 +158,12 @@ Event handler for when the cursor is put over a node
   */
   useEffect(() => {
     if (!nodeGroups.current) return;
-    // If a node is found in the list of selected nodes, assing it a "selected" class
+    // If a node is found in the list of selected nodes, assign it a "selected" class
     nodeGroups.current.classed("selected", (n) =>
       selectedNodes.find((sn) => sn.data.id === n.data.id)
     );
     // If one of an edge's endpoint is found in the list of selected nodes, assing it a "selected" class
+    // If both of an edge's endpoints are found in the selected nodes list, assign the edge a "selected-endpoints" class
     edgeGroups.current
       .classed("selected", (e) =>
         selectedNodes.find(

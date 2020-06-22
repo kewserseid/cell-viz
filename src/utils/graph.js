@@ -5,3 +5,16 @@ export const placeNodesOnPath = (nodes, path) => {
     return { ...c, x, y };
   });
 };
+
+export const getShapeForNode = (node) => {
+  switch (node.data.subgroup) {
+    case "Genes":
+      return "symbolCircle";
+    case "Reactome":
+      return "symbolDiamond";
+    case "Uniprot":
+      return "symbolTriangle";
+    default:
+      return "symbolStar";
+  }
+};
