@@ -1,3 +1,26 @@
+/*
+
+*/
+export const getCuratedGraph = ({ elements }) => {
+  const nodes = elements.nodes.filter(
+    (n) =>
+      !n.data.id.includes("GO:") &&
+      !n.data.id.includes("R-HSA") &&
+      !n.data.id.includes("SMPDB") &&
+      !n.data.id.includes("CL:") &&
+      !n.data.id.includes("UBERON")
+  );
+  const edges = elements.edges.filter(
+    (e) =>
+      nodes.some((n) => n.data.id === e.data.source) &&
+      nodes.some((n) => n.data.id === e.data.target)
+  );
+  return { nodes, edges };
+};
+
+/*
+
+*/
 export const placeNodesOnPath = (nodes, path) => {
   const length = path.getTotalLength();
   return nodes.map((c, i, arr) => {
