@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { placeNodesOnPath, getShapeForNode } from "../../utils/graph";
-import diagram from "./generic_cell.svg";
 const d3 = require("d3");
 
-export default ({ graph, onNodeClick, selectedNodes }) => {
+export default ({ graph, onNodeClick, selectedNodes, diagram }) => {
   let svg = useRef();
   let nodeGroups = useRef();
   let edgeGroups = useRef();
@@ -36,8 +35,8 @@ export default ({ graph, onNodeClick, selectedNodes }) => {
   */
   const renderGraph = () => {
     // TODO: Map the locations of the nodes to available locations in this visualizer
-    const nodes = getPositionAssignedNodes(graph.elements.nodes, []);
-    const edges = graph.elements.edges.map((e) => ({
+    const nodes = getPositionAssignedNodes(graph.nodes, []);
+    const edges = graph.edges.map((e) => ({
       ...e,
       data: {
         ...e.data,
@@ -45,6 +44,11 @@ export default ({ graph, onNodeClick, selectedNodes }) => {
         target: nodes.find((n) => n.data.id === e.data.target),
       },
     }));
+
+    const nodeTypeColorScheme = d3
+      .scaleOrdinal()
+      .domain(nodes.map((n) => n.data.subgroup))
+      .range(d3.schemeCategory10);
 
     /*
       Create an SVG group for each node placed in the visualization. This group will contain the shape representing the node, as well as labels, tooltips and other elements that belong to that specific node
@@ -78,7 +82,8 @@ export default ({ graph, onNodeClick, selectedNodes }) => {
 
     nodeGroups.current
       .append("path")
-      .attr("d", (n) => d3.symbol().type(d3[getShapeForNode(n)]).size(30)());
+      .attr("d", (n) => d3.symbol().type(d3[getShapeForNode(n)]).size(30)())
+      .style("fill", (n) => nodeTypeColorScheme(n.data.subgroup));
 
     /*
       Append line to edge group
@@ -100,9 +105,9 @@ export default ({ graph, onNodeClick, selectedNodes }) => {
   */
   const getPositionAssignedNodes = (nodes, locations) => {
     // TODO: Place the nodes on the mapped location paths
-    const nucleoplasm = d3.select(`#nucleoplasm`).node();
-    const golgi = d3.select(`#golgi_apparatus`).node();
-    const plasma = d3.select(`#plasma_membrane`).node();
+    const nucleoplasm = d3.select(`#GO0005654`).node();
+    const golgi = d3.select(`#GO0005796`).node();
+    const plasma = d3.select(`#GO0005886`).node();
 
     const nodesWithPosition = [
       ...placeNodesOnPath(
