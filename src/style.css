@@ -1,19 +1,20 @@
 body {
   padding: 0;
   margin: 0;
+  overflow-y: hidden;
 }
 
 .main-container {
   height: 100vh;
   display: grid;
-  grid-template-rows: auto;
+  grid-template-rows: minmax(0, 100vh);
   grid-template-columns: 1fr 100vh 1fr;
-  grid-template-areas: "navigation content filters";
+  grid-template-areas: "navigation content definition";
 }
 
 .navigation {
   grid-area: navigation;
-  padding: 0 15px;
+  padding: 15px;
   border-right: solid 1px #ddd;
 }
 
@@ -21,10 +22,16 @@ body {
   grid-area: content;
 }
 
-.filters {
-  grid-area: filters;
-  padding: 15px;
+.definition {
+  grid-area: definition;
   border-left: solid 1px #ddd;
+  overflow-y: auto;
+}
+
+.definition h3.ant-typography {
+  padding: 15px;
+  border-bottom: solid 1px #ddd;
+  margin-bottom: 0;
 }
 
 #svg-wrapper {
