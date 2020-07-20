@@ -41,3 +41,25 @@ export const getShapeForNode = (node) => {
       return "symbolStar";
   }
 };
+
+/*
+  *
+  for the input node, return all nodes connected to it with an edge
+  *
+  */
+export const getConnectedNodes = (node, graphData) => {
+  const { id } = node.data;
+  const { nodes, edges } = graphData.elements;
+  const connectedNodes = [];
+  // for every edge, if the selected node is its source add the target as a connected node. If the selected node is its target, add its source as a connected node.
+  edges.forEach((e) => {
+    const { source, target } = e.data;
+    if (source === id) {
+      connectedNodes.push(nodes.find((n) => n.data.id === target));
+    }
+    if (target === id) {
+      connectedNodes.push(nodes.find((n) => n.data.id === source));
+    }
+  });
+  return connectedNodes;
+};
