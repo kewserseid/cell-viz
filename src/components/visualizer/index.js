@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { placeNodesOnPath, getShapeForNode } from "../../utils/graph";
 const d3 = require("d3");
 
-export default ({ graph, onNodeClick, selectedNodes, diagram }) => {
+export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
   let svg = useRef();
   let nodeGroups = useRef();
   let edgeGroups = useRef();
@@ -35,15 +35,23 @@ export default ({ graph, onNodeClick, selectedNodes, diagram }) => {
   */
   const renderGraph = () => {
     // TODO: Map the locations of the nodes to available locations in this visualizer
-    const nodes = getPositionAssignedNodes(graph.nodes, []);
-    const edges = graph.edges.map((e) => ({
-      ...e,
-      data: {
-        ...e.data,
-        source: nodes.find((n) => n.data.id === e.data.source),
-        target: nodes.find((n) => n.data.id === e.data.target),
-      },
-    }));
+    const nodes = getPositionAssignedNodes(graph.nodes);
+    const edges = graph.edges
+      .filter((e) => {
+        return (
+          nodes.some((n) => n.data.id === e.data.source) &&
+          nodes.some((n) => n.data.id === e.data.target)
+        );
+      })
+      .map((e) => ({
+        ...e,
+        data: {
+          ...e.data,
+          source: nodes.find((n) => n.data.id === e.data.source),
+          target: nodes.find((n) => n.data.id === e.data.target),
+        },
+      }));
+    console.log("edges", edges);
 
     const nodeTypeColorScheme = d3
       .scaleOrdinal()
@@ -82,7 +90,7 @@ export default ({ graph, onNodeClick, selectedNodes, diagram }) => {
 
     nodeGroups.current
       .append("path")
-      .attr("d", (n) => d3.symbol().type(d3[getShapeForNode(n)]).size(30)())
+      .attr("d", (n) => d3.symbol().type(d3[getShapeForNode(n)]).size(40)())
       .style("fill", (n) => nodeTypeColorScheme(n.data.subgroup));
 
     /*
@@ -103,31 +111,26 @@ export default ({ graph, onNodeClick, selectedNodes, diagram }) => {
   /*
   TODO: memoize the result of this function because it might be very expensive depending on the size of the input
   */
-  const getPositionAssignedNodes = (nodes, locations) => {
-    // TODO: Place the nodes on the mapped location paths
-    const nucleoplasm = d3.select(`#GO0005654`).node();
-    const golgi = d3.select(`#GO0005796`).node();
-    const plasma = d3.select(`#GO0005886`).node();
+  const getPositionAssignedNodes = (nodes) => {
+    const nodesWithPosition = [];
+    locations.forEach((location) => {
+      const nodesToPlace = nodes.filter((n) => n.data.location === location);
+      nodesWithPosition.push(
+        ...placeNodesOnPath(
+          nodesToPlace,
+          d3.select(`#${location.replace(":", "")}`).node()
+        )
+      );
+    });
 
-    const nodesWithPosition = [
+    nodesWithPosition.push(
       ...placeNodesOnPath(
-        nodes.filter((n) => n.data.location.includes("nucleus")),
-        nucleoplasm
-      ),
-      ...placeNodesOnPath(
-        nodes.filter((n) => n.data.location.includes("golgi apparatus")),
-        golgi
-      ),
-      ...placeNodesOnPath(
-        nodes.filter(
-          (n) =>
-            !n.data.location.includes("nucleus") &&
-            !n.data.location.includes("golgi apparatus")
-        ),
-        plasma
-      ),
-    ];
+        nodes.filter((n) => n.data.location === ""),
+        d3.select("#unlocalized").node()
+      )
+    );
 
+    console.log("nodesWithPosition", nodesWithPosition);
     return nodesWithPosition;
   };
 

@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Typography } from "antd";
-import { getCuratedGraph, getConnectedNodes } from "./utils/graph";
+import {
+  getCuratedGraph,
+  getConnectedNodes,
+  duplicateMutlilocationNodes,
+} from "./utils/graph";
 import Cell from "./components/cell";
 import Definition from "./components/definition-box";
 import "antd/dist/antd.min.css";
@@ -21,10 +25,17 @@ export default () => {
     const reader = new FileReader();
     reader.onload = () => {
       const graphData = JSON.parse(reader.result);
-      const curatedGraphData = getCuratedGraph(graphData);
+      console.log("graphData", graphData);
+      console.log(
+        graphData.elements.nodes.reduce((acc, curr) => {
+          return acc + curr.data.location.split(",").length;
+        }, 0)
+      );
+      const curatedGraphData = getCuratedGraph(graphData.elements);
+      const duplicatedGraph = duplicateMutlilocationNodes(curatedGraphData);
       setSelectedNodes([]);
       setData(graphData);
-      setGraph(curatedGraphData);
+      setGraph(duplicatedGraph);
     };
     reader.readAsText(e.target.files[0]);
   };
@@ -54,7 +65,7 @@ export default () => {
   return (
     <div className="main-container">
       <nav className="navigation">
-        <Typography.Title>Cell Viz</Typography.Title>
+        <Typography.Title>Cell visualizer</Typography.Title>
         <input
           type="file"
           accept="application/JSON"
