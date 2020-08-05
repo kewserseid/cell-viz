@@ -1,7 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap");
 body {
   padding: 0;
   margin: 0;
   overflow-y: hidden;
+}
+
+h1,
+h3 {
+  font-family: "Inter";
 }
 
 .main-container {
@@ -15,7 +21,7 @@ body {
 .navigation {
   grid-area: navigation;
   padding: 15px;
-  border-right: solid 1px #ddd;
+  /* border-right: solid 1px #ddd; */
 }
 
 .content {
@@ -24,13 +30,13 @@ body {
 
 .definition {
   grid-area: definition;
-  border-left: solid 1px #ddd;
+  /* border-left: solid 1px #ddd; */
   overflow-y: auto;
 }
 
 .definition h3.ant-typography {
   padding: 15px;
-  border-bottom: solid 1px #ddd;
+  /* border-bottom: solid 1px #ddd; */
   margin-bottom: 0;
 }
 
