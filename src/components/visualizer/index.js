@@ -1,5 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import { placeNodesOnPath, getShapeForNode } from "../../utils/graph";
+import {
+  getUniqueLocations,
+  mapLocations,
+  assignRenderLocationToNodes,
+  duplicateMutlilocationNodes,
+  placeNodesOnPath,
+  getShapeForNode,
+} from "../../utils/graph";
 const d3 = require("d3");
 
 export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
@@ -20,23 +27,28 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
       d3.select("#svg-wrapper").node().append(element);
       element.setAttribute("id", "svg");
       svg.current = d3.select(element);
+      renderGraph();
     });
   };
 
   useEffect(() => {
-    if (svg.current) {
-      svg.current.selectAll("g.node,g.edge,div.tooltip").remove();
-      renderGraph();
-    }
+    if (svg.current) renderGraph();
   }, [graph]);
 
-  /*
-    draw the graph 
-  */
-  const renderGraph = () => {
-    // TODO: Map the locations of the nodes to available locations in this visualizer
-    const nodes = getPositionAssignedNodes(graph.nodes);
-    const edges = graph.edges
+  const prepareGraph = () => {
+    console.log("Preparing graph ...");
+    const uniqueNodeLocations = getUniqueLocations(graph.nodes);
+    const locationMapping = mapLocations(uniqueNodeLocations, locations);
+    let nodesWithRenderLocations = assignRenderLocationToNodes(
+      graph.nodes,
+      locationMapping
+    );
+    const duplicatedGraph = duplicateMutlilocationNodes({
+      nodes: nodesWithRenderLocations,
+      edges: graph.edges,
+    });
+    const nodes = getPositionAssignedNodes(duplicatedGraph.nodes);
+    const edges = duplicatedGraph.edges
       .filter((e) => {
         return (
           nodes.some((n) => n.data.id === e.data.source) &&
@@ -51,7 +63,16 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
           target: nodes.find((n) => n.data.id === e.data.target),
         },
       }));
-    console.log("edges", edges);
+    return { nodes, edges };
+  };
+  /*
+    draw the graph 
+  */
+  const renderGraph = () => {
+    svg.current.selectAll("g.node,g.edge,div.tooltip").remove();
+    if (!graph) return;
+
+    const { nodes, edges } = prepareGraph();
 
     const nodeTypeColorScheme = d3
       .scaleOrdinal()
@@ -130,7 +151,6 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
       )
     );
 
-    console.log("nodesWithPosition", nodesWithPosition);
     return nodesWithPosition;
   };
 
@@ -146,7 +166,7 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
     d3.select("body")
       .append("div")
       .classed("tooltip", true)
-      .html(n.data.id)
+      .html(n.data.identifier)
       .classed("highlighted", true)
       .style("left", d3.event.pageX + 5 + "px")
       .style("top", d3.event.pageY - 30 + "px");
