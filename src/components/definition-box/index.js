@@ -1,16 +1,15 @@
 import React from "react";
-import { Collapse, Typography } from "antd";
+import { Collapse } from "antd";
 
 export default ({ nodes }) => {
   return (
     <>
       <Collapse bordered={false} defaultActiveKey={[0]}>
         {nodes.map((n, i) => (
-          <Collapse.Panel header={n.data.id} key={i}>
-            <h3>{n.data.identifier}</h3>
+          <Collapse.Panel header={n.data.identifier} key={i}>
             <p>{n.data.definition}</p>
             <p>Location: {n.data.location ? n.data.location : "Unlocalized"}</p>
-            <h4>Connections</h4>
+            <h3>Connections</h3>
             <ul>
               {n.connectedNodes.map((cn) => (
                 <li>
