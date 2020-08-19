@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   getUniqueLocations,
   mapLocations,
@@ -13,30 +13,57 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
   let svg = useRef();
   let nodeGroups = useRef();
   let edgeGroups = useRef();
-
-  useEffect(() => {
-    embedDrawing();
-  }, []);
+  const [adaptedGraph, setAdaptedGraph] = useState();
 
   /*
+  *
+  *
   embed the svg drawing to DOM
+  *
+  *
+  */
+  useEffect(() => {
+    if (graph)
+      embedDrawing().then(() => {
+        setAdaptedGraph(adaptGraphToVisualizer(graph));
+      });
+  }, [graph]);
+
+  /*
+  *
+  *
+  embed the svg drawing to DOM
+  *
+  *
   */
   const embedDrawing = () => {
-    d3.xml(diagram).then((data) => {
+    return d3.xml(diagram).then((data) => {
       const element = data.documentElement;
       d3.select("#svg-wrapper").node().append(element);
       element.setAttribute("id", "svg");
       svg.current = d3.select(element);
-      renderGraph();
     });
   };
 
+  /*
+  *
+  *
+  embed the svg drawing to DOM
+  *
+  *
+  */
   useEffect(() => {
-    if (svg.current) renderGraph();
-  }, [graph]);
+    if (adaptedGraph && svg.current) renderGraph();
+  }, [adaptedGraph]);
 
-  const prepareGraph = () => {
-    console.log("Preparing graph ...");
+  /*
+  *
+  *
+  embed the svg drawing to DOM
+  *
+  *
+  */
+  function adaptGraphToVisualizer() {
     const uniqueNodeLocations = getUniqueLocations(graph.nodes);
     const locationMapping = mapLocations(uniqueNodeLocations, locations);
     let nodesWithRenderLocations = assignRenderLocationToNodes(
@@ -64,20 +91,25 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
         },
       }));
     return { nodes, edges };
-  };
+  }
   /*
     draw the graph 
   */
   const renderGraph = () => {
     svg.current.selectAll("g.node,g.edge,div.tooltip").remove();
-    if (!graph) return;
-
-    const { nodes, edges } = prepareGraph();
-
+    if (!adaptedGraph) return;
+    const { nodes, edges } = adaptedGraph;
     const nodeTypeColorScheme = d3
       .scaleOrdinal()
       .domain(nodes.map((n) => n.data.subgroup))
-      .range(d3.schemeCategory10);
+      .range([
+        "#40a9ff",
+        "#fa8c16",
+        "#F49531",
+        "#73d13d",
+        "#eb2f96",
+        "#36cfc9",
+      ]);
 
     /*
       Create an SVG group for each node placed in the visualization. This group will contain the shape representing the node, as well as labels, tooltips and other elements that belong to that specific node
@@ -132,7 +164,7 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
   /*
   TODO: memoize the result of this function because it might be very expensive depending on the size of the input
   */
-  const getPositionAssignedNodes = (nodes) => {
+  function getPositionAssignedNodes(nodes) {
     const nodesWithPosition = [];
     locations.forEach((location) => {
       const nodesToPlace = nodes.filter((n) => n.data.location === location);
@@ -152,7 +184,7 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
     );
 
     return nodesWithPosition;
-  };
+  }
 
   /*
   Event handler for when the cursor is put over a node
