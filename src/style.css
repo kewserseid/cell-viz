@@ -1,64 +1,184 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap");
+
+:root {
+  --dark0: #222;
+  --dark1: #333;
+  --link: #8dcff8;
+  --active-link: #b7e3fa;
+  --muted-text: #ddd;
+}
+
 body {
-  padding: 0;
-  margin: 0;
-  overflow-y: hidden;
+  overflow: hidden;
+  background-color: #f5f5dc;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23c1c17c' fill-opacity='0.18'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  font-family: Roboto;
 }
 
-h1,
-h3 {
-  font-family: "Inter";
-}
-
-.main-container {
+.landing {
   height: 100vh;
+  padding: 0 25vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.landing h1 {
+  font-size: 3.5rem;
+}
+
+.landing button {
+  margin-bottom: 30px;
+}
+
+.container {
   display: grid;
-  grid-template-rows: minmax(0, 100vh);
   grid-template-columns: 1fr 100vh 1fr;
-  grid-template-areas: "navigation content definition";
+  grid-template-areas: "header main .";
 }
 
-.navigation {
-  grid-area: navigation;
-  padding: 15px;
-  /* border-right: solid 1px #ddd; */
+nav {
+  grid-area: "header";
+  padding: 15px 30px;
 }
 
-.content {
-  grid-area: content;
+main {
+  grid-area: "main";
+  height: 100vh;
+  width: 100vh;
+  margin: auto;
 }
 
-.definition {
-  grid-area: definition;
-  /* border-left: solid 1px #ddd; */
+.navigation-widget {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+}
+
+.navigation-widget .ant-card-body {
+  padding: 0;
+}
+
+.definition-widget {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 300px;
+}
+
+.definition-widget .ant-card-body {
+  padding: 0;
+  max-height: 90vh;
   overflow-y: auto;
 }
 
-.definition h3.ant-typography {
-  padding: 15px;
-  /* border-bottom: solid 1px #ddd; */
-  margin-bottom: 0;
+/* Override colors */
+.definition-widget {
+  background-color: var(--dark1);
+  color: #fff;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
-#svg-wrapper {
-  height: 100%;
-  display: flex;
-  justify-content: center;
+.definition-widget .ant-card-head-title,
+.definition-widget h1,
+.definition-widget h2,
+.definition-widget h3,
+.definition-widget h4 {
+  color: #fff;
 }
 
-#svg {
-  height: 100%;
+.definition-widget .ant-collapse > .ant-collapse-item {
+  border-bottom: none;
 }
 
-/* SVG elements style */
+.definition-widget .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  background-color: var(--dark1);
+  color: #fff;
+  font-weight: bold;
+}
 
+.definition-widget .ant-collapse-borderless {
+  background-color: var(--dark0);
+}
+
+.definition-widget .ant-collapse-content {
+  color: var(--muted-text);
+}
+
+.definition-widget .ant-collapse-content a {
+  color: var(--link);
+}
+
+.definition-widget .ant-card-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.definition-widget .ant-card-body::-webkit-scrollbar-track {
+  background-color: var(--dark0);
+}
+
+.definition-widget .ant-card-body::-webkit-scrollbar-thumb {
+  background-color: var(--link);
+}
+
+.navigation-widget {
+  background-color: var(--dark1);
+  color: #fff;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.navigation-widget .ant-card-head-title,
+.navigation-widget h1,
+.navigation-widget h2,
+.navigation-widget h3,
+.navigation-widget h4 {
+  color: #fff;
+}
+
+.navigation-widget .ant-tree {
+  background-color: var(--dark0);
+  color: #fff;
+  padding: 10px;
+}
+
+.navigation-widget .ant-tree a {
+  color: var(--link);
+}
+
+.navigation-widget
+  .ant-tree
+  .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  background-color: transparent;
+}
+
+.navigation-widget
+  .ant-tree
+  .ant-tree-node-content-wrapper.ant-tree-node-selected
+  a {
+  color: var(--active-link);
+  font-weight: bold;
+}
+
+.ant-tree .ant-tree-node-content-wrapper:hover {
+  background-color: transparent;
+}
+
+.definition-widget .ant-card-head:hover,
+.navigation-widget .ant-card-head:hover {
+  cursor: grab;
+}
+
+/* SVG styles */
 div.tooltip {
   display: none;
   position: absolute;
   text-align: center;
   padding: 5px;
-  background-color: #000;
+  background-color: var(--dark0);
   color: #fff;
+  border-radius: 3px;
 }
 
 div.highlighted.tooltip {
@@ -66,13 +186,8 @@ div.highlighted.tooltip {
 }
 
 g.edge line {
-  stroke: #000;
+  stroke: var(--dark0);
   opacity: 0.05;
-}
-
-g.node path {
-  fill: #20a4f3;
-  stroke: #fff;
 }
 
 g.highlighted.edge line {
@@ -81,10 +196,11 @@ g.highlighted.edge line {
 
 g.highlighted.node path {
   transform: scale(2);
+  cursor: pointer;
 }
 
 g.selected.node path {
-  transform: scale(2);
+  transform: scale(3);
 }
 
 g.selected.edge line {
