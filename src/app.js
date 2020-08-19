@@ -1,8 +1,13 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { Typography, Tree, Divider, Upload, Checkbox } from "antd";
-import { CloudUploadOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Typography, Tree, Upload, Card, Button, Alert } from "antd";
+import {
+  UploadOutlined,
+  DragOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
 import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { getCuratedGraph, getConnectedNodes } from "./utils/graph";
+import Draggable from "react-draggable";
 import Cell from "./components/cell";
 import Golgi from "./components/golgi-apparatus";
 import Mitochondrion from "./components/mitochondrion";
@@ -14,6 +19,13 @@ import Definition from "./components/definition-box";
 import "antd/dist/antd.min.css";
 import "./style.css";
 
+/*
+*
+*
+tree navigation for sub-cellular components
+*
+*
+*/
 const treeData = [
   {
     title: <Link to="/">Generic cell</Link>,
@@ -24,21 +36,36 @@ const treeData = [
         key: "0-0-0",
       },
       {
-        title: <Link to="/golgi">Golgi apparatus</Link>,
+        title: <Link to="/mitochondrion">Mitochondrion</Link>,
         key: "0-0-1",
       },
       {
-        title: <Link to="/rough-er">Rough endoplasmic reticulum</Link>,
+        title: <Link to="/golgi">Golgi apparatus</Link>,
         key: "0-0-2",
       },
       {
-        title: <Link to="/smooth-er">Smooth endoplasmic reticulum</Link>,
+        title: <Link to="/rough-er">Rough endoplasmic reticulum</Link>,
         key: "0-0-3",
+      },
+      {
+        title: <Link to="/smooth-er">Smooth endoplasmic reticulum</Link>,
+        key: "0-0-4",
+      },
+      {
+        title: <Link to="/ribosome">Ribosome</Link>,
+        key: "0-0-5",
       },
     ],
   },
 ];
 
+/*
+*
+*
+component
+*
+*
+*/
 export default () => {
   const [data, setData] = useState();
   const [graph, setGraph] = useState();
@@ -64,14 +91,14 @@ export default () => {
 
   /*
   *
+  *
   handle click event on node
+  *
   *
   */
   const handleNodeClick = (node) => {
     const connectedNodes = getConnectedNodes(node, data);
-    // add to the node's data, all nodes connected to it
     const selectedNode = { ...node, connectedNodes };
-    // Check if the node is selected. If selected remove it from selected nodes list, otherwise add it to selected nodes list
     setSelectedNodes((nodes) =>
       nodes.find((n) => n.data.id === node.data.id)
         ? nodes.filter((n) => n.data.id !== node.data.id)
@@ -79,100 +106,157 @@ export default () => {
     );
   };
 
+  /*
+  *
+  *
+  graph JSON uploader props
+  *
+  *
+  */
   const uploaderProps = {
     accept: ".json",
+    showUploadList: { showRemoveIcon: false },
     beforeUpload: (file) => {
       handleFileUpload(file);
       return false;
     },
-    onRemove: () => {
-      setSelectedNodes([]);
-      setGraph(null);
-      setData(null);
-    },
   };
 
+  /*
+  *
+  *
+  common props for all cell-level and sub-cellular visualizers
+  *
+  *
+  */
   const visualizerProps = {
     graph,
     selectedNodes,
     onNodeClick: handleNodeClick,
   };
+
   /*
-   *
-   *
-   *
-   */
+  *
+  *
+  if no graph data is uploaded yet, show uploader
+  *
+  *
+  */
+  if (!graph)
+    return (
+      <div className="landing">
+        <Typography.Title style={{ lineHeight: 1, marginBottom: 15 }}>
+          Cell visualizer
+        </Typography.Title>
+        <Typography.Title style={{ marginTop: 0 }} level={3} type="secondary">
+          Location aware visualization of genes, protiens and small molecules
+        </Typography.Title>
+        <Upload {...uploaderProps}>
+          <Button type="primary" size="large">
+            <UploadOutlined /> Upload gene annotation graph data
+          </Button>
+        </Upload>
+        <Typography.Paragraph>
+          Don't have a graph data? Head over to MOZI's{" "}
+          <a href="http://annotation.mozi.ai">Gene annotation service</a> to
+          generate one.
+        </Typography.Paragraph>
+      </div>
+    );
+
+  /*
+  *
+  *
+  if graph data is uploaded, render visualizer and navigator
+  *
+  *
+  */
   return (
-    <div className="main-container">
-      <nav className="navigation">
-        <Typography.Title>Cell visualizer</Typography.Title>
-        <div style={{ flexShrink: 1 }}>
-          <Upload.Dragger {...uploaderProps}>
-            <div
-              style={{
-                display: "flex",
-                padding: "0 15px",
-                alignItems: "center",
-              }}
-            >
-              <CloudUploadOutlined
-                style={{ marginRight: 15, color: "#1890ff", fontSize: 36 }}
-              />{" "}
-              Upload a graph JSON file
-            </div>
-          </Upload.Dragger>
-        </div>
-        <br />
-        {!graph && (
-          <p className="ant-upload-hint">
-            Don't have a graph data? Head over to MOZI's{" "}
-            <a href="http://annotation.mozi.ai">Gene annotation service</a> to
-            generate one.
-          </p>
-        )}
-        {graph && (
-          <>
-            <br />
-            <h3>Navigation</h3>
-            <Tree
-              showLine
-              defaultExpandedKeys={[
-                "0-0-0",
-                "0-0-1",
-                "1-1-0",
-                "0-0-2",
-                "0-0-3",
-              ]}
-              defaultSelectedKeys={["0-0"]}
-              treeData={treeData}
-            />
-          </>
-        )}
-      </nav>
-      <div className="content">
-        <Router>
-          <Switch>
-            <Route path="/" exact>
-              <Cell {...visualizerProps} />
-            </Route>
-            <Route path="/nucleus">
-              <Nucleus {...visualizerProps} />
-            </Route>
-            <Route path="/golgi">
-              <Golgi {...visualizerProps} />
-            </Route>
-            <Route path="/rough-er">
-              <RoughER {...visualizerProps} />
-            </Route>
-            <Route path="/smooth-er">
-              <SmoothER {...visualizerProps} />
-            </Route>
-          </Switch>
-        </Router>
+    <>
+      <div className="container">
+        <nav>
+          <Typography.Title style={{ marginBottom: 0 }}>
+            Cell visualizer
+          </Typography.Title>
+          <Typography.Paragraph>
+            Imported {graph.nodes.length} nodes with {graph.edges.length}{" "}
+            connections.
+          </Typography.Paragraph>
+          <Alert
+            showIcon
+            closable
+            message="Depending on the graph data and the subcellular locations supported in the visualization, only subset of the graph maybe visible at a time."
+            style={{ marginBottom: 15 }}
+          />
+          <Upload {...uploaderProps}>
+            <Button type="primary">
+              <UploadOutlined /> Upload another graph data
+            </Button>
+          </Upload>
+        </nav>
+        <main>
+          <Router>
+            <Switch>
+              <Route path="/" exact>
+                <Cell {...visualizerProps} />
+              </Route>
+              <Route path="/nucleus">
+                <Nucleus {...visualizerProps} />
+              </Route>
+              <Route path="/mitochondrion">
+                <Mitochondrion {...visualizerProps} />
+              </Route>
+              <Route path="/golgi">
+                <Golgi {...visualizerProps} />
+              </Route>
+              <Route path="/rough-er">
+                <RoughER {...visualizerProps} />
+              </Route>
+              <Route path="/smooth-er">
+                <SmoothER {...visualizerProps} />
+              </Route>
+              <Route path="/ribosome">
+                <Ribosome {...visualizerProps} />
+              </Route>
+            </Switch>
+          </Router>
+        </main>
       </div>
-      <div className="definition">
-        <Definition nodes={selectedNodes} />
-      </div>
-    </div>
+      <Draggable>
+        <Card
+          title={
+            <>
+              <DragOutlined /> Navigation
+            </>
+          }
+          size="small"
+          className="navigation-widget"
+          bordered={false}
+        >
+          <Tree
+            showLine={false}
+            defaultSelectedKeys={["0-0"]}
+            defaultExpandedKeys={["0-0"]}
+            treeData={treeData}
+          />
+        </Card>
+      </Draggable>
+      {selectedNodes.length > 0 && (
+        <Draggable>
+          <Card
+            title={
+              <>
+                <QuestionCircleOutlined /> Selected node definitions
+              </>
+            }
+            size="small"
+            className="definition-widget"
+            bordered={false}
+          >
+            <Definition nodes={selectedNodes} />
+          </Card>
+        </Draggable>
+      )}
+    </>
   );
 };
