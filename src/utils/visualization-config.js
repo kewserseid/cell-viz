@@ -32,9 +32,6 @@ export default {
       "GO:0005886",
     ],
   },
-  MITOCHONDRION: {
-    locations: [""],
-  },
   NUCLEUS: {
     locations: [
       "GO:0005643",
@@ -53,7 +50,16 @@ export default {
   SMOOTH_ENDOPLASMIC_RETICULUM: {
     locations: ["GO:0048238", "GO:0030868"],
   },
+  MITOCHONDRION: {
+    locations: [
+      "GO:0005759",
+      "GO:0005743",
+      "GO:0005758",
+      "GO:0005741",
+      "GO:0030061",
+    ],
+  },
   RIBOSOME: {
-    locations: [],
+    locations: ["GO:0030688", "GO:0030687"],
   },
 };
