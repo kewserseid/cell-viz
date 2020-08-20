@@ -12,7 +12,7 @@ export default ({ nodes }) => {
             <h3>Connections</h3>
             <ul>
               {n.connectedNodes.map((cn) => (
-                <li>
+                <li key={cn.data.id}>
                   <a href={cn.data.definition} target="_blank">
                     {cn.data.id}
                   </a>
