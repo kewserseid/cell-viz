@@ -60,6 +60,6 @@ export default {
     ],
   },
   RIBOSOME: {
-    locations: ["GO:0030688", "GO:0030687"],
+    locations: ["GO:0015934", "GO:0015935"],
   },
 };
