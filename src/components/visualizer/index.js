@@ -38,6 +38,7 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
   */
   const embedDrawing = () => {
     return d3.xml(diagram).then((data) => {
+      if (svg.current) svg.current.remove();
       const element = data.documentElement;
       d3.select("#svg-wrapper").node().append(element);
       element.setAttribute("id", "svg");
