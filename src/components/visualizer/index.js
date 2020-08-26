@@ -100,13 +100,16 @@ export default ({ graph, onNodeClick, selectedNodes, diagram, locations }) => {
     svg.current.selectAll("g.node,g.edge,div.tooltip").remove();
     if (!adaptedGraph) return;
     const { nodes, edges } = adaptedGraph;
+
+    const nodeTypes = Array.from(new Set(nodes.map((n) => n.data.subgroup)));
+    console.log("subgroup", nodeTypes);
     const nodeTypeColorScheme = d3
       .scaleOrdinal()
-      .domain(nodes.map((n) => n.data.subgroup))
+      .domain(nodeTypes)
       .range([
         "#40a9ff",
         "#fa8c16",
-        "#F49531",
+        "#eb2f96",
         "#73d13d",
         "#eb2f96",
         "#36cfc9",
