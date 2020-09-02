@@ -23,13 +23,18 @@ export default ({ nodes }) => (
         </p>
         <h3>Connections</h3>
         <ul>
-          {n.connectedNodes.map((cn) => (
-            <li key={cn.data.id}>
-              <a href={cn.data.definition} target="_blank">
-                {cn.data.id}
-              </a>
-            </li>
-          ))}
+          {n.connectedNodes
+            .filter(
+              (cn, i, self) =>
+                self.findIndex((s) => s.data.id === cn.data.id) === i
+            )
+            .map((cn) => (
+              <li key={cn.data.id}>
+                <a href={cn.data.definition} target="_blank">
+                  {cn.data.id}
+                </a>
+              </li>
+            ))}
         </ul>
       </Collapse.Panel>
     ))}
